@@ -3,3 +3,4 @@ Ciao, progetto fatto a cavolo perché sono disoccupato e non so cosa fare, quind
 | GIORNO | MECCANICA |
 | --- | --- |
 | 1 | PLANARE!!!!1 |
+| 2 | SPRINT AEREO |
