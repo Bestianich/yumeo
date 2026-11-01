@@ -12,7 +12,10 @@ public class InputController : MonoBehaviour , PlayerInputs.IGroundInputActions 
     
     public delegate void OnGlideInput(bool isGliding);
     public static event OnGlideInput OnGlideInputAction;
-    
+
+
+    public delegate float OnStartSprint(bool isSprinting);
+    public static event OnStartSprint OnStartSprintAction;
     
     
     
@@ -81,11 +84,20 @@ public class InputController : MonoBehaviour , PlayerInputs.IGroundInputActions 
             OnGlideInputAction?.Invoke(false);
     }
 
+    public void OnSprint(InputAction.CallbackContext context)
+    {
+        if (context.performed)
+            OnStartSprintAction?.Invoke(true);
+        if(context.canceled)
+            OnStartSprintAction?.Invoke(false);
+    }
+
     public void OnJump(InputAction.CallbackContext context)
     {
         if(context.performed)
             OnJumpInputAction?.Invoke();
             
     }
+
     
 }

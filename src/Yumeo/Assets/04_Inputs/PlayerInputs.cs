@@ -109,6 +109,15 @@ public partial class @PlayerInputs: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Sprint"",
+                    ""type"": ""Button"",
+                    ""id"": ""b1da359c-18fb-4904-a3f7-39501edb1217"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -177,6 +186,17 @@ public partial class @PlayerInputs: IInputActionCollection2, IDisposable
                     ""action"": ""Jump"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""f1aa80df-346b-4a4b-bb83-5d4b7f6ea4b0"",
+                    ""path"": ""<Keyboard>/shift"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Sprint"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         },
@@ -197,6 +217,15 @@ public partial class @PlayerInputs: IInputActionCollection2, IDisposable
                     ""name"": ""Glide"",
                     ""type"": ""Button"",
                     ""id"": ""53fb47e4-360b-4327-8ca0-e1f16c17eaa4"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Sprint"",
+                    ""type"": ""Button"",
+                    ""id"": ""de00ec01-1732-45db-8ad4-40049d1214ef"",
                     ""expectedControlType"": """",
                     ""processors"": """",
                     ""interactions"": """",
@@ -269,6 +298,39 @@ public partial class @PlayerInputs: IInputActionCollection2, IDisposable
                     ""action"": ""Glide"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": ""One Modifier"",
+                    ""id"": ""0ea3f0a8-f32e-415c-89b2-aa639fd8d582"",
+                    ""path"": ""OneModifier"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Sprint"",
+                    ""isComposite"": true,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": ""modifier"",
+                    ""id"": ""3900ebd0-f56c-49b0-916f-4207ce8b7739"",
+                    ""path"": ""<Keyboard>/space"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Sprint"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""binding"",
+                    ""id"": ""8c3ed6ce-4f80-48c7-9e44-44008f42f3d0"",
+                    ""path"": ""<Keyboard>/shift"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Sprint"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
                 }
             ]
         }
@@ -279,10 +341,12 @@ public partial class @PlayerInputs: IInputActionCollection2, IDisposable
         m_GroundInput = asset.FindActionMap("GroundInput", throwIfNotFound: true);
         m_GroundInput_Movement = m_GroundInput.FindAction("Movement", throwIfNotFound: true);
         m_GroundInput_Jump = m_GroundInput.FindAction("Jump", throwIfNotFound: true);
+        m_GroundInput_Sprint = m_GroundInput.FindAction("Sprint", throwIfNotFound: true);
         // GlideInput
         m_GlideInput = asset.FindActionMap("GlideInput", throwIfNotFound: true);
         m_GlideInput_Movement = m_GlideInput.FindAction("Movement", throwIfNotFound: true);
         m_GlideInput_Glide = m_GlideInput.FindAction("Glide", throwIfNotFound: true);
+        m_GlideInput_Sprint = m_GlideInput.FindAction("Sprint", throwIfNotFound: true);
     }
 
     ~@PlayerInputs()
@@ -366,6 +430,7 @@ public partial class @PlayerInputs: IInputActionCollection2, IDisposable
     private List<IGroundInputActions> m_GroundInputActionsCallbackInterfaces = new List<IGroundInputActions>();
     private readonly InputAction m_GroundInput_Movement;
     private readonly InputAction m_GroundInput_Jump;
+    private readonly InputAction m_GroundInput_Sprint;
     /// <summary>
     /// Provides access to input actions defined in input action map "GroundInput".
     /// </summary>
@@ -385,6 +450,10 @@ public partial class @PlayerInputs: IInputActionCollection2, IDisposable
         /// Provides access to the underlying input action "GroundInput/Jump".
         /// </summary>
         public InputAction @Jump => m_Wrapper.m_GroundInput_Jump;
+        /// <summary>
+        /// Provides access to the underlying input action "GroundInput/Sprint".
+        /// </summary>
+        public InputAction @Sprint => m_Wrapper.m_GroundInput_Sprint;
         /// <summary>
         /// Provides access to the underlying input action map instance.
         /// </summary>
@@ -417,6 +486,9 @@ public partial class @PlayerInputs: IInputActionCollection2, IDisposable
             @Jump.started += instance.OnJump;
             @Jump.performed += instance.OnJump;
             @Jump.canceled += instance.OnJump;
+            @Sprint.started += instance.OnSprint;
+            @Sprint.performed += instance.OnSprint;
+            @Sprint.canceled += instance.OnSprint;
         }
 
         /// <summary>
@@ -434,6 +506,9 @@ public partial class @PlayerInputs: IInputActionCollection2, IDisposable
             @Jump.started -= instance.OnJump;
             @Jump.performed -= instance.OnJump;
             @Jump.canceled -= instance.OnJump;
+            @Sprint.started -= instance.OnSprint;
+            @Sprint.performed -= instance.OnSprint;
+            @Sprint.canceled -= instance.OnSprint;
         }
 
         /// <summary>
@@ -473,6 +548,7 @@ public partial class @PlayerInputs: IInputActionCollection2, IDisposable
     private List<IGlideInputActions> m_GlideInputActionsCallbackInterfaces = new List<IGlideInputActions>();
     private readonly InputAction m_GlideInput_Movement;
     private readonly InputAction m_GlideInput_Glide;
+    private readonly InputAction m_GlideInput_Sprint;
     /// <summary>
     /// Provides access to input actions defined in input action map "GlideInput".
     /// </summary>
@@ -492,6 +568,10 @@ public partial class @PlayerInputs: IInputActionCollection2, IDisposable
         /// Provides access to the underlying input action "GlideInput/Glide".
         /// </summary>
         public InputAction @Glide => m_Wrapper.m_GlideInput_Glide;
+        /// <summary>
+        /// Provides access to the underlying input action "GlideInput/Sprint".
+        /// </summary>
+        public InputAction @Sprint => m_Wrapper.m_GlideInput_Sprint;
         /// <summary>
         /// Provides access to the underlying input action map instance.
         /// </summary>
@@ -524,6 +604,9 @@ public partial class @PlayerInputs: IInputActionCollection2, IDisposable
             @Glide.started += instance.OnGlide;
             @Glide.performed += instance.OnGlide;
             @Glide.canceled += instance.OnGlide;
+            @Sprint.started += instance.OnSprint;
+            @Sprint.performed += instance.OnSprint;
+            @Sprint.canceled += instance.OnSprint;
         }
 
         /// <summary>
@@ -541,6 +624,9 @@ public partial class @PlayerInputs: IInputActionCollection2, IDisposable
             @Glide.started -= instance.OnGlide;
             @Glide.performed -= instance.OnGlide;
             @Glide.canceled -= instance.OnGlide;
+            @Sprint.started -= instance.OnSprint;
+            @Sprint.performed -= instance.OnSprint;
+            @Sprint.canceled -= instance.OnSprint;
         }
 
         /// <summary>
@@ -595,6 +681,13 @@ public partial class @PlayerInputs: IInputActionCollection2, IDisposable
         /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
         void OnJump(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "Sprint" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnSprint(InputAction.CallbackContext context);
     }
     /// <summary>
     /// Interface to implement callback methods for all input action callbacks associated with input actions defined by "GlideInput" which allows adding and removing callbacks.
@@ -617,5 +710,12 @@ public partial class @PlayerInputs: IInputActionCollection2, IDisposable
         /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
         void OnGlide(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "Sprint" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnSprint(InputAction.CallbackContext context);
     }
 }

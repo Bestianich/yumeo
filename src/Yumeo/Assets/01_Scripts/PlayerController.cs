@@ -7,6 +7,7 @@ public class PlayerController : MonoBehaviour
 {
 
     [SerializeField] private float _moveSpeed = 5f;
+    [SerializeField] private float _sprintSpeed = 15f;
     [SerializeField] private float _checkGroundRange = 1f;
     [SerializeField] private float _jumpForce = 100f;
     
@@ -27,6 +28,10 @@ public class PlayerController : MonoBehaviour
     private float _fallVelocity = 0;
     private float _currentGravityForce = 0;
 
+    private float _currentSpeed = 0f;
+    
+    
+
 
     #region Input Event Registration
     
@@ -35,8 +40,10 @@ public class PlayerController : MonoBehaviour
             InputController.SetMovementInputAction += SetMovementInput;
             InputController.OnJumpInputAction += Jump;
             InputController.OnGlideInputAction += Glide;
+            InputController.OnStartSprintAction += OnSprint;
         }
         
+
         private void OnDisable()
         {
             InputController.SetMovementInputAction -= SetMovementInput;
@@ -50,6 +57,7 @@ public class PlayerController : MonoBehaviour
         _camera = Camera.main;
         _glideParticles.Stop();
         _currentGravityForce = _gravityForce;
+        _currentSpeed = _moveSpeed;
     }
     
     private void Update()
@@ -61,6 +69,7 @@ public class PlayerController : MonoBehaviour
     }
     
 
+    public float OnSprint(bool isSprinting) => isSprinting ? _currentSpeed = _sprintSpeed : _currentSpeed = _moveSpeed; 
     private void SetMovementInput(Vector2 movementInput) => _movementInput = movementInput;
 
     public void Move()
@@ -74,7 +83,7 @@ public class PlayerController : MonoBehaviour
             direction.y = 0;
         }
         
-        transform.position += (direction * _moveSpeed  + Vector3.up * _fallVelocity ) * Time.deltaTime;
+        transform.position += (direction * _currentSpeed  + Vector3.up * _fallVelocity ) * Time.deltaTime;
         
     }
     
