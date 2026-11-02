@@ -8,7 +8,8 @@ public class PlayerController : MonoBehaviour
 
     [SerializeField] private float _moveSpeed = 5f;
     [SerializeField] private float _sprintSpeed = 15f;
-    [SerializeField] private float _checkGroundRange = 1f;
+    [SerializeField] private float _rotationSpeed = 10f;
+    [FormerlySerializedAs("_checkGroundRange")] [SerializeField] private float _groundCheckRange = 1f;
     [SerializeField] private float _jumpForce = 100f;
     
     [Header("GRAVITY DATA")]
@@ -19,15 +20,20 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float _glideGravityForce = 0.2f;
     [SerializeField] private ParticleSystem _glideParticles;
     
+    [Header("WALL RIDE DATA")]
+    [SerializeField] private Vector3 _wallRight = Vector3.right; 
+    [SerializeField] private float _wallCheckRange = .2f;
+    
+    
     
     private Camera _camera;
     private Vector2 _movementInput;
     private bool _isGrounded = true;
     private bool _isGliding = false;
     
+    
     private float _fallVelocity = 0;
     private float _currentGravityForce = 0;
-
     private float _currentSpeed = 0f;
     
     
@@ -81,6 +87,9 @@ public class PlayerController : MonoBehaviour
             if (direction.sqrMagnitude > 1f)
                 direction.Normalize();
             direction.y = 0;
+            float playerRotation = Mathf.Atan2(direction.x, direction.z) * Mathf.Rad2Deg;
+            Quaternion rotation = Quaternion.Euler(0f, playerRotation, 0f);
+            transform.rotation = Quaternion.Slerp(transform.rotation, rotation, _rotationSpeed * Time.deltaTime);
         }
         
         transform.position += (direction * _currentSpeed  + Vector3.up * _fallVelocity ) * Time.deltaTime;
@@ -111,7 +120,7 @@ public class PlayerController : MonoBehaviour
     public void CheckGround()
     {
         Ray groundRay = new Ray(transform.position, _gravityDirection);
-        if (Physics.Raycast(groundRay, out RaycastHit hit , _checkGroundRange))
+        if (Physics.Raycast(groundRay, out RaycastHit hit , _groundCheckRange))
         {
 
             if (!_isGrounded)
@@ -145,6 +154,8 @@ public class PlayerController : MonoBehaviour
     private void OnDrawGizmos()
     {
         Gizmos.color = Color.yellow;
-        Gizmos.DrawRay(transform.position, _gravityDirection * _checkGroundRange);
+        Gizmos.DrawRay(transform.position, _gravityDirection * _groundCheckRange);
+        Gizmos.color = Color.red;
+        Gizmos.DrawRay(transform.position  - _wallRight, _wallRight * _wallCheckRange);
     }
 }
